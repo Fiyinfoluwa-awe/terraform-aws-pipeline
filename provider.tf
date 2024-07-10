@@ -4,8 +4,8 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "cicd-class"
+    bucket = "dherby-cicd-class"
     key    = "terraform.tfstate"
-    region = "eu-west-2"
+    region = "us-east-1"
   }
 }
