@@ -4,6 +4,7 @@ pipeline {
     environment {
         TF_CLI_ARGS = '-no-color'
     }
+}
 
     stages {
         stage('Checkout') {
@@ -13,6 +14,15 @@ pipeline {
                 }
             }
         }
+        }
+        stage('Lint Code') {
+            steps {
+                script { 
+                    echo 'Linting Terraform configurations...'
+                    sh 'terraform validate'
+                    echo 'Terraform configurations validated'
+                }
+            }
 
         stage('Terraform Plan') {
             steps {
@@ -43,17 +53,8 @@ pipeline {
                 }
             }
         }
-        stage('Lint Code') {
-            steps {
-                script { 
-                    echo 'Linting Terraform configurations...'
-                    sh 'terraform validate'
-                    echo 'Terraform configurations validated'
-                }
-            }
-        }
+        
     
-        }
     }
     post {
     always {
