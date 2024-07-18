@@ -1,10 +1,17 @@
+def COLOR_MAP = [
+    'FAILURE' : 'danger'
+    'SUCCESS' : 'good'
+]
+
+
+
 pipeline {
     agent any
 
     environment {
         TF_CLI_ARGS = '-no-color'
     }
-}
+
 
     stages {
         stage('Checkout') {
@@ -67,7 +74,18 @@ pipeline {
                 }
             }
         }
+        // Slack notification code
+        failure {
+            script {
+                echo 'Sending Slack notification for Terraform failure...'
+                slackSend (
+                    channel: 'terraform-jenkins-build',
+                    color: COLOR_MAP [currentBuild.currentResult],
+                    message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env,BUILD_NUMBER} \n More info at: ${env.BUILD}"
+                )
+            }
+        }
     }
     }
-
+}
 
