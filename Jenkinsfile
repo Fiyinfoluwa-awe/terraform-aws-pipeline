@@ -80,8 +80,8 @@ pipeline {
                 echo 'Sending Slack notification for Terraform failure...'
                 slackSend (
                     channel: 'terraform-jenkins-build',
-                    color: COLOR_MAP [currentBuild.currentResult],
-                    message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env,BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+                    color: COLOR_MAP[currentBuild.currentResult] ?: 'warning', // Default to 'warning' if the result is not mapped
+                    message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} \n build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
                 )
             }
         }
