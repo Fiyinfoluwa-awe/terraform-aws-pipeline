@@ -1,5 +1,5 @@
 def COLOR_MAP = [
-    'FAILURE' : 'danger' ,
+    'FAILURE' : 'danger',
     'SUCCESS' : 'good'
 ]
 
@@ -10,7 +10,6 @@ pipeline {
         TF_CLI_ARGS = '-no-color'
     }
 
-
     stages {
         stage('Checkout') {
             steps {
@@ -19,16 +18,17 @@ pipeline {
                 }
             }
         }
-        }
+
         stage('Lint Code') {
             steps {
-                script {
+                script { 
                     echo 'Linting Terraform configurations...'
                     sh 'terraform validate'
                     echo 'Terraform configurations validated'
                 }
             }
         }
+
         stage('Terraform Plan') {
             steps {
                 script {
@@ -43,12 +43,14 @@ pipeline {
 
         stage('Terraform Apply') {
             when {
-                expression { env.BRANCH_NAME == 'main' }
-                expression { currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null }
+                allOf {
+                    branch 'main'
+                    expression { currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null }
+                }
             }
             steps {
                 script {
-        //             // Ask for manual confirmation before applying changes
+                    // Ask for manual confirmation before applying changes
                     input message: 'Do you want to apply changes?', ok: 'Yes'
                     withCredentials([aws(credentialsId: 'AWS_CRED', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         sh 'terraform init'
@@ -58,21 +60,21 @@ pipeline {
                 }
             }
         }
-        
-    
     }
+
     post {
-    always {
-        stage('Cleanup') {
-            steps {
-                script {
-                    echo 'Performing cleanup....'
-                    sh 'rm -rf tfplan' // cleanup comand to remove plan file
-                    echo 'Cleanup completed'
+        always {
+            stage('Cleanup') {
+                steps {
+                    script {
+                        echo 'Performing cleanup....'
+                        sh 'rm -rf tfplan' // cleanup command to remove plan file
+                        echo 'Cleanup completed'
+                    }
                 }
             }
         }
-        // Slack notification code
+        
         failure {
             script {
                 echo 'Sending Slack notification for Terraform failure...'
@@ -84,6 +86,7 @@ pipeline {
             }
         }
     }
-    }
+}
+
 
 
