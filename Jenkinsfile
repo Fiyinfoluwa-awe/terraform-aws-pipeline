@@ -3,8 +3,6 @@ def COLOR_MAP = [
     'SUCCESS' : 'good'
 ]
 
-
-
 pipeline {
     agent any
 
@@ -24,13 +22,13 @@ pipeline {
         }
         stage('Lint Code') {
             steps {
-                script { 
+                script {
                     echo 'Linting Terraform configurations...'
                     sh 'terraform validate'
                     echo 'Terraform configurations validated'
                 }
             }
-
+        }
         stage('Terraform Plan') {
             steps {
                 script {
@@ -87,5 +85,5 @@ pipeline {
         }
     }
     }
-}
+
 
