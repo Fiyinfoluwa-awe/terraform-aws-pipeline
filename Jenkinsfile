@@ -64,13 +64,11 @@ pipeline {
 
     post {
         always {
-            stage('Cleanup') {
-                steps {
-                    script {
-                        echo 'Performing cleanup....'
-                        sh 'rm -rf tfplan' // cleanup command to remove plan file
-                        echo 'Cleanup completed'
-                    }
+            script {
+                echo 'Performing cleanup....'
+                sh 'rm -rf tfplan' // cleanup command to remove plan file
+                echo 'Cleanup completed'
+                }
                 }
             }
         }
@@ -85,8 +83,8 @@ pipeline {
                 )
             }
         }
-    }
-}
+    
+
 
 
 
